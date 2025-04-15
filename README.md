@@ -62,7 +62,7 @@ This project automates a home using **gesture recognition** (via OpenCV) and **v
 - **Gesture Control**: The `openCV.py` script uses the camera to detect hand gestures and sends control commands (e.g., "LED ON") to the **ESP32**.
 - **Voice Control**: The `Speech.py` script uses a microphone to listen for voice commands (e.g., "Turn on the light") and sends the command to **ESP32**.
 - **ESP32**: The **ESP32** listens for WebSocket messages, processes the commands, and broadcasts the updated status (LED, Fan, Video) to the web interface.
-## Teammates:
+## Teammates
 - Shahazad Abdulla
 - Sidharth Sajith
 - Tharun Oommmen Jacob
