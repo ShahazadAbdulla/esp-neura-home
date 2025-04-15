@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuraHome - Truly Intelligent Home Automation Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Inter:wght@400;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at center, #0f172a, #030712);
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .top-info {
+            position: absolute;
+            top: 10px;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 14px;
+            border-radius: 6px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+        }
+
+        .top-left {
+            left: 15px;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .top-right { right: 15px; }
+
+        .glow-orb {
+            position: relative;
+            width: 180px;
+            height: 180px;
+        }
+
+        .glow-orb img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            z-index: 2;
+            position: relative;
+            animation: rotateOrb 12s linear infinite;
+        }
+
+        .glow {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(0, 183, 255, 0.4), transparent);
+            border-radius: 50%;
+            filter: blur(15px);
+            animation: pulseGlow 3s infinite alternate;
+        }
+
+        @keyframes rotateOrb { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes pulseGlow { from { transform: scale(1); opacity: 0.8; } to { transform: scale(1.1); opacity: 0.4; } }
+
+        .branding {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .branding h1 {
+            font-size: 2rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .branding p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .connection-box {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 8px 12px;
+            margin-top: 15px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+            width: 90%;
+            max-width: 700px;
+        }
+
+        .info-box {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .status-icon {
+            width: 80px;
+            height: 80px;
+            margin: 8px auto;
+            filter: drop-shadow(0px 0px 8px rgba(255, 255, 255, 0.6));
+            opacity: 0.7;
+        }
+        .status-icon.on {
+            opacity: 1;
+        }
+
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-top: 6px;
+            display: inline-block;
+        }
+
+        .indicator.off { background: red; }
+        .indicator.on { background: green; }
+
+        #connectionStatus {
+            font-weight: bold;
+            margin-left: 8px;
+        }
+        .connected { color: green; }
+        .disconnected { color: red; }
+
+        /* --- Video Status Styles --- */
+        .video-status {
+            margin: 8px auto;
+            display: block;
+        }
+
+        .video-status video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+            background-color: #333;
+        }
+        /* --- End Video Status Styles --- */
+
+        /* --- Connection Indicator --- */
+        #websocketIndicator {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+        }
+        #websocketIndicator.connected { background: green; }
+        #websocketIndicator.disconnected { background: red; }
+        /* --- End Connection Indicator --- */
+
+        /* --- Weather Icon Style --- */
+        #weatherIcon {
+            font-size: 1.2rem;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        /* --- End Weather Icon Style --- */
+
+        /* --- Launch Script Box Style --- */
+        .launch-box {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 10px 15px;
+            margin-top: 10px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+            width: fit-content;
+            display: flex; /* Add flex to the launch-box */
+            justify-content: center; /* Center buttons horizontally */
+            gap: 10px; /* Add gap between buttons */
+        }
+
+        .launch-box button {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+        /* --- End Launch Script Box Style --- */
+
+        /* --- Gesture Preview Box Style --- */
+        .gesture-preview-box {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Clip content to bounds */
+        }
+
+        #gestureCanvas {
+            width: 80px;  /* Match status-icon size */
+            height: 80px; /* Match status-icon size */
+            display: block; /* Remove extra space below canvas */
+        }
+
+        /* --- End Gesture Preview Box Style --- */
+
+
+    </style>
+</head>
+<body>
+
+    <div class="top-info top-left">
+        <div id="time" class="font-orbitron">--:--</div>
+        <div id="date" class="text-gray-300 text-sm">Loading date...</div>
+    </div>
+
+    <div class="top-info top-right">
+        <span id="weatherIcon">☁️</span><div id="weather">Cloudy</div>
+        <div id="temp" class="text-gray-300 text-sm">25°C</div>
+    </div>
+
+    <div class="glow-orb">
+        <div class="glow"></div>
+        <img src="/static/arc-reactor.png" alt="Arc Reactor">
+    </div>
+
+    <div class="branding">
+        <h1>NeuraHome</h1>
+        <p>Truly Intelligent Home Automation</p>
+    </div>
+
+    <div class="connection-box"> <span id="websocketIndicator" class="disconnected"></span> <div id="connectionStatus" class="disconnected">Disconnected from WebSocket</div> </div>
+
+    <div class="grid-layout">
+        <div class="info-box">
+            <span class="text-lg font-medium">Fan</span>
+            <img id="fan-status" src="/static/fan.png" alt="Fan Status" class="status-icon">
+            <div id="fan-indicator" class="indicator off"></div>
+        </div>
+
+        <div class="info-box">
+            <span class="text-lg font-medium">LED</span>
+            <img id="led-status" src="/static/led.png" alt="LED Status" class="status-icon">
+            <div id="led-indicator" class="indicator off"></div>
+        </div>
+
+        <div class="info-box video-status">
+            <span class="text-lg font-medium">Video</span>
+            <video id="demoVideo" controls>
+                <source src="/static/demo.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <div class="info-box gesture-preview-box">
+            <span class="text-lg font-medium">Gesture Preview</span>
+            <canvas id="gestureCanvas" width="80" height="80"></canvas>  <!-- Canvas for webcam preview -->
+            <p class="text-sm text-gray-400 mt-1">Webcam Feed</p>
+        </div>
+
+    </div>
+
+    <!-- REMOVED restart-box -->
+
+    <div class="launch-box">
+        <button id="launchOpenCvButton" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2">
+            Launch OpenCV Script
+        </button>
+        <button id="startVoiceControlButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2">
+            Start Voice Control
+        </button>
+    </div>
+
+
+    <script>
+        // --- WebSocket Setup (Keep for LED, FAN, VIDEO Gesture Control) ---
+        const socket = new WebSocket("ws://192.168.13.254:81"); // *** Make sure this IP matches your Python script's ESP32_IP ***
+        const websocketIndicator = document.getElementById('websocketIndicator');
+        const connectionStatusDisplay = document.getElementById('connectionStatus');
+        const gestureCanvas = document.getElementById('gestureCanvas');
+        const gestureCanvasCtx = gestureCanvas.getContext('2d');
+
+        socket.onopen = () => {
+            console.log("[WebSocket] Connection opened");
+            connectionStatusDisplay.textContent = 'Connected to WebSocket';
+            connectionStatusDisplay.className = 'connected';
+            websocketIndicator.className = 'connected';
+        };
+
+        socket.onmessage = (event) => {
+            console.log("[WebSocket] Received:", event.data);
+            const messageData = event.data;
+
+            if (messageData.includes("LED")) {
+                updateDeviceStatus("led", messageData.includes("ON"));
+            } else if (messageData.includes("FAN")) {
+                updateDeviceStatus("fan", messageData.includes("ON"));
+            } else if (messageData.includes("VIDEO")) {
+                const videoElement = document.getElementById("demoVideo");
+                if (messageData.includes("VIDEO PLAYING")) {
+                    videoElement.play();
+                } else if (messageData.includes("VIDEO PAUSED")) {
+                    videoElement.pause();
+                }
+            }
+            // --- REMOVED GESTURE_FRAME HANDLING FROM JAVASCRIPT ---
+            else {
+                console.log("[WebSocket] Unhandled message:", messageData);
+            }
+        };
+
+        function updateDeviceStatus(device, isOn) {
+            const statusIcon = document.getElementById(`${device}-status`);
+            statusIcon.classList.toggle('on', isOn);
+            const indicator = document.getElementById(`${device}-indicator`);
+            if (indicator) {
+                indicator.className = `indicator ${isOn ? 'on' : 'off'}`;
+            } else {
+                console.warn(`[UI Update] Indicator element for device '${device}' not found.`);
+            }
+        }
+
+        socket.onerror = (error) => {
+            console.error("[WebSocket] Error:", error);
+            connectionStatusDisplay.textContent = 'WebSocket Error';
+            connectionStatusDisplay.className = 'disconnected';
+            websocketIndicator.className = 'disconnected';
+        };
+
+        socket.onclose = () => {
+            console.log("[WebSocket] Connection closed");
+            connectionStatusDisplay.textContent = 'Disconnected from WebSocket';
+            connectionStatusDisplay.className = 'disconnected';
+            websocketIndicator.className = 'disconnected';
+        };
+
+        websocketIndicator.className = 'disconnected';
+
+        // --- Button Event Listeners (FETCH API calls to Flask Server) ---
+        // --- REMOVED terminateScriptButton Event Listener ---
+
+
+        document.getElementById('launchOpenCvButton').addEventListener('click', () => {
+            fetch('/launch_opencv', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message); // Show alert with server response
+                    if (data.status === 'error' || data.status === 'warning') {
+                        console.warn("[Frontend] Launch status:", data.message); // Use warn for non-success but not critical error
+                    }
+                })
+                .catch(error => {
+                    console.error("[Frontend] Error calling /launch_opencv:", error);
+                    alert("Error communicating with server to launch script.");
+                });
+        });
+
+        // --- NEW: Event Listener for Start Voice Control Button ---
+        document.getElementById('startVoiceControlButton').addEventListener('click', () => {
+            fetch('/start_voice_control', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message); // Show alert with server response
+                    if (data.status === 'error' || data.status === 'warning') {
+                        console.warn("[Frontend] Voice Control Status:", data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("[Frontend] Error calling /start_voice_control:", error);
+                    alert("Error communicating with server to start voice control.");
+                });
+        });
+
+
+        // --- Time and Date Update (unchanged) ---
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('time').textContent = now.toLocaleTimeString();
+            document.getElementById('date').textContent = now.toLocaleDateString();
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // --- Weather (Placeholder - unchanged) ---
+        async function fetchWeather() {
+            document.getElementById("weather").textContent = "Cloudy";
+            document.getElementById("temp").textContent = "25°C";
+        }
+        fetchWeather();
+
+    </script>
+
+</body>
+</html>
